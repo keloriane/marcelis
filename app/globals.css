@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7f6;
+  --foreground: #333333;
+  /* Vert logo Marcelis */
+  --brand-sage: #97a9a4;
+  --brand-sage-rgb: 151, 169, 164;
+  --brand-sage-light: #c8d4d1;
+  --brand-sage-pale: #e8eeec;
+  /* Dérivés plus foncés pour textes, boutons et sections sombres */
+  --brand-primary: #6f827d;
+  --brand-primary-dark: #556862;
+  --brand-dark: #2f3b38;
+  --brand-dark-mid: #3d4a47;
+  --brand-accent: #7d918c;
+  --brand-muted: #737373;
+  --brand-surface: #f0f3f2;
+  --brand-border: #d9e2df;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-dark-mid: var(--brand-dark-mid);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-dark: var(--brand-primary-dark);
+  --color-brand-sage: var(--brand-sage);
+  --color-brand-sage-light: var(--brand-sage-light);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-border: var(--brand-border);
+  --font-sans: var(--font-open-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-open-sans), system-ui, sans-serif;
+}
+
+.section-dark {
+  background-color: var(--brand-dark);
+  background-image:
+    linear-gradient(165deg, rgba(47, 59, 56, 0.96) 0%, rgba(61, 74, 71, 0.9) 100%),
+    radial-gradient(ellipse at 20% 80%, rgba(var(--brand-sage-rgb), 0.18) 0%, transparent 50%);
+}
+
+.hero-dark {
+  background-color: var(--brand-dark);
+  background-image:
+    linear-gradient(120deg, rgba(47, 59, 56, 0.93) 35%, rgba(47, 59, 56, 0.58) 100%),
+    radial-gradient(circle at 85% 20%, rgba(var(--brand-sage-rgb), 0.22) 0%, transparent 45%);
+}
+
+.display-title {
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  line-height: 1.05;
+}
+
+.section-label {
+  letter-spacing: 0.22em;
+}
+
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.faq-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.faq-panel > div {
+  overflow: hidden;
 }
