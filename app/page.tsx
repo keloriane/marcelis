@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -26,6 +26,7 @@ const SITE = {
   phoneHref: "tel:+32476305395",
   domain: "expertisesdemaison.be",
   logo: "/logo.jpg",
+  heroBackground: "/hero-house.avif",
   profilePhoto: "/Photo N&B.jpg",
   linkedin: "",
   instagram: "",
@@ -66,7 +67,7 @@ const SERVICES = [
     title: "Déclaration de succession",
     subtitle: "Conformité administrative",
     description:
-      "Accompagnement dans l'évaluation des biens immobiliers à déclarer.",
+      "Accompagnement dans les déclarations de successions.",
     icon: "document",
   },
 ] as const;
@@ -201,6 +202,8 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 export default function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [headerSolid, setHeaderSolid] = useState(false);
+  const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [contactMessage, setContactMessage] = useState("");
 
   useEffect(() => {
     const onScroll = () => setHeaderSolid(window.scrollY > 48);
@@ -235,11 +238,24 @@ export default function Home() {
       });
 
       gsap.from(".hero-photo", {
-        scale: 1.06,
         opacity: 0,
         duration: 1.2,
         ease: "power2.out",
         delay: 0.35,
+      });
+
+      gsap.from(".hero-card-photo", {
+        clipPath: "inset(0 0 100% 0)",
+        duration: 1.15,
+        ease: "power3.out",
+        delay: 0.65,
+      });
+
+      gsap.from(".hero-card-photo img", {
+        scale: 1.18,
+        duration: 1.35,
+        ease: "power3.out",
+        delay: 0.65,
       });
 
       gsap.utils.toArray<HTMLElement>(".reveal-up").forEach((el) => {
@@ -300,6 +316,46 @@ export default function Home() {
     ? "text-brand-muted hover:text-brand-primary"
     : "text-white/80 hover:text-white";
 
+  async function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setContactStatus("submitting");
+    setContactMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          civilite: formData.get("civilite"),
+          nom: formData.get("nom"),
+          email: formData.get("email"),
+          telephone: formData.get("telephone"),
+          demande: formData.get("demande"),
+          message: formData.get("message"),
+          rgpd: formData.get("rgpd") === "accepté",
+          website: formData.get("website"),
+        }),
+      });
+
+      const result = (await response.json().catch(() => null)) as { message?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message || "L'envoi a échoué.");
+      }
+
+      form.reset();
+      setContactStatus("success");
+      setContactMessage("Votre demande a bien été envoyée. Je vous recontacte rapidement.");
+    } catch (error) {
+      setContactStatus("error");
+      setContactMessage(error instanceof Error ? error.message : "L'envoi a échoué.");
+    }
+  }
+
   return (
     <div ref={rootRef}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -310,8 +366,15 @@ export default function Home() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-          <a href="#" className="relative z-10 shrink-0 rounded-lg bg-white/95 px-2 py-1">
-            <Image src={SITE.logo} alt={`${SITE.name} — ${SITE.title}`} width={437} height={277} priority className="h-9 w-auto lg:h-10" />
+          <a href="#" className="relative z-10 shrink-0 rounded-lg bg-white/90 px-2 py-1 shadow-sm transition">
+            <Image
+              src={SITE.logo}
+              alt={`${SITE.name} — ${SITE.title}`}
+              width={437}
+              height={277}
+              priority
+              className="h-12 w-auto transition lg:h-16"
+            />
           </a>
           <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Navigation principale">
             {NAV.map((item) => (
@@ -329,7 +392,7 @@ export default function Home() {
             className={`shrink-0 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
               headerSolid
                 ? "bg-brand-primary text-white hover:bg-brand-primary-dark"
-                : "bg-white text-brand-dark hover:bg-brand-sage-light"
+                : "bg-brand-sage text-brand-dark hover:bg-brand-sage-light"
             }`}
           >
             Contact
@@ -338,60 +401,106 @@ export default function Home() {
       </header>
 
       <main>
-        {/* Hero sombre */}
-        <section className="hero-dark relative min-h-[92vh] overflow-hidden">
+        {/* Hero éditorial */}
+        <section className="hero-dark relative min-h-screen overflow-hidden md:h-screen md:min-h-[760px]">
           <div className="absolute inset-0">
             <Image
-              src={SITE.profilePhoto}
+              src={SITE.heroBackground}
               alt=""
               fill
               priority
-              className="object-cover object-top opacity-35"
+              className="object-cover object-center opacity-85"
               sizes="100vw"
               aria-hidden
             />
           </div>
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(22,31,28,0.88),rgba(37,51,47,0.52)_48%,rgba(142,173,162,0.2))]" />
+          <div className="absolute inset-0 bg-brand-dark/20" />
+          <div className="absolute bottom-0 right-0 hidden h-[42%] w-[66%] bg-brand-sage/20 lg:block" />
 
-          <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-end px-5 pb-28 pt-32 lg:px-8 lg:pb-36">
-            <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
-              <div>
-                <p className="hero-line display-title text-4xl text-white sm:text-5xl md:text-6xl lg:text-7xl">MARCELIS</p>
-                <p className="hero-line display-title mt-1 text-3xl text-brand-sage-light sm:text-4xl md:text-5xl">Stéphanie</p>
-                <p className="hero-line display-title mt-2 text-2xl text-white/90 sm:text-3xl md:text-4xl">Expert Immobilier</p>
-                <p className="hero-fade mt-8 max-w-xl text-base leading-relaxed text-white/75 md:text-lg">{SITE.tagline}</p>
-                <p className="hero-fade mt-3 text-sm font-medium tracking-widest text-brand-sage uppercase">{SITE.ipi}</p>
-                <div className="hero-fade mt-10 flex flex-wrap gap-4">
+          <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-5 pb-6 pt-28 md:h-full md:min-h-0 lg:px-8 lg:pb-8 lg:pt-28">
+            <div className="space-y-6 md:space-y-8">
+              <div className="max-w-3xl">
+                <p className="hero-line display-title text-4xl text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">MARCELIS</p>
+                <p className="hero-line display-title mt-1 text-3xl text-white drop-shadow-lg sm:text-4xl md:text-5xl">Stéphanie</p>
+                <p className="hero-line display-title mt-2 text-2xl text-brand-sage-light drop-shadow-md sm:text-3xl md:text-4xl">Expert Immobilier</p>
+                <p className="hero-fade mt-6 max-w-xl text-base font-semibold leading-relaxed text-white md:text-lg">{SITE.tagline}</p>
+                <div className="hero-fade mt-7 flex flex-wrap gap-4">
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center bg-white px-8 py-3.5 text-xs font-semibold uppercase tracking-wider text-brand-dark transition hover:bg-brand-sage-light"
+                    className="inline-flex items-center justify-center bg-brand-sage px-8 py-3.5 text-xs font-semibold uppercase tracking-wider text-brand-dark transition hover:bg-brand-sage-light"
                   >
                     Prendre rendez-vous
                   </a>
                   <a
                     href={SITE.phoneHref}
-                    className="inline-flex items-center justify-center border border-white/40 px-8 py-3.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:border-white hover:bg-white/10"
+                    className="inline-flex items-center justify-center border border-brand-sage/80 bg-brand-dark/20 px-8 py-3.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:border-white hover:bg-white/10"
                   >
                     {SITE.phone}
                   </a>
                 </div>
               </div>
 
-              <div className="hero-photo relative mx-auto hidden aspect-[3/4] w-full max-w-xs overflow-hidden border-4 border-white/20 shadow-2xl lg:block lg:max-w-sm">
-                <Image
-                  src={SITE.profilePhoto}
-                  alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
-                  fill
-                  priority
-                  className="object-cover object-top"
-                  sizes="384px"
-                />
+              <div className="hero-photo relative left-1/2 w-screen -translate-x-1/2 bg-white shadow-2xl md:h-[40vh] md:min-h-[330px] lg:max-h-[420px]">
+                <div className="hero-photo-content mx-auto grid h-full max-w-7xl gap-6 px-5 py-5 md:grid-cols-[minmax(0,1fr)_260px] md:items-stretch md:px-7 md:py-7 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-8 lg:py-8 xl:grid-cols-[minmax(0,1fr)_400px]">
+                  <div className="flex min-w-0 flex-col justify-center">
+                    <div className="flex items-start gap-4">
+                      <HexBadge className="size-12 bg-brand-sage/30 text-brand-primary-dark">
+                        <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </HexBadge>
+                      <div>
+                        <p className="section-label text-[11px] font-bold uppercase text-brand-primary-dark">Expert indépendant diplômé</p>
+                        <p className="mt-2 text-xs font-semibold uppercase tracking-widest text-brand-sage">{SITE.ipi}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 max-w-3xl space-y-4 text-sm font-semibold leading-relaxed text-brand-dark md:text-base">
+                      <p>
+                        {SITE.name}{" "}intervient principalement dans le Hainaut, le Brabant wallon et à Bruxelles pour la
+                        réalisation d&apos;états des lieux et la valorisation de biens immobiliers.
+                      </p>
+                      <p>
+                        Votre experte indépendante et diplômée se tient à votre disposition pour vos expertises
+                        immobilières, successions, séparations et déclarations de succession.
+                      </p>
+                    </div>
+
+                    <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:max-w-2xl">
+                      <a
+                        href="#contact"
+                        className="inline-flex items-center justify-center bg-brand-dark px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
+                      >
+                        Prendre rendez-vous
+                      </a>
+                      <a
+                        href={SITE.phoneHref}
+                        className="inline-flex items-center justify-center border border-brand-sage px-5 py-3 text-xs font-semibold uppercase tracking-wider text-brand-dark transition hover:bg-brand-sage-pale"
+                      >
+                        {SITE.phone}
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="hero-card-photo relative min-h-72 overflow-hidden bg-brand-sage-pale [clip-path:inset(0_0_0_0)] md:min-h-0">
+                    <Image
+                      src={SITE.profilePhoto}
+                      alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
+                      fill
+                      priority
+                      className="object-contain object-center grayscale"
+                      sizes="(min-width: 1280px) 420px, (min-width: 1024px) 360px, 100vw"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* À propos — encart blanc superposé */}
-        <section id="a-propos" className="relative z-20 -mt-16 scroll-mt-28 md:-mt-28">
+        <section id="a-propos" className="relative z-20 scroll-mt-28">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="grid gap-0 bg-white shadow-2xl lg:grid-cols-[1fr_340px]">
               <div className="p-8 md:p-12 lg:p-14">
@@ -415,7 +524,7 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              <aside className="flex flex-col justify-center bg-brand-surface p-8 md:p-10">
+              <aside className="flex flex-col justify-center bg-brand-sage-pale p-8 md:p-10">
                 <h3 className="reveal-up text-sm font-semibold uppercase tracking-widest text-brand-primary">Coordonnées</h3>
                 <ul className="reveal-stagger mt-6 space-y-5 text-sm">
                   <li className="reveal-stagger-item">
@@ -456,7 +565,7 @@ export default function Home() {
         {/* Services — encart sur bandeau */}
         <section id="services" className="relative z-20 -mt-20 scroll-mt-28 md:-mt-28">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
-            <div className="bg-white px-8 py-14 shadow-2xl md:px-14 md:py-16">
+            <div className="border-t-8 border-brand-sage bg-white px-8 py-14 shadow-2xl md:px-14 md:py-16">
               <SectionLabel
                 icon={
                   <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden>
@@ -512,7 +621,7 @@ export default function Home() {
               {SITE.zones.map((zone) => (
                 <li
                   key={zone}
-                  className="zone-pill border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold uppercase tracking-wider text-white backdrop-blur-sm"
+                  className="zone-pill border border-brand-sage/50 bg-brand-sage/20 px-8 py-3.5 text-sm font-semibold uppercase tracking-wider text-white backdrop-blur-sm"
                 >
                   {zone}
                 </li>
@@ -535,9 +644,9 @@ export default function Home() {
             </SectionLabel>
             <h2 className="reveal-up display-title text-2xl text-brand-primary-dark md:text-3xl">CE QUE DISENT MES CLIENTS</h2>
             <div className="reveal-cards mt-14 grid gap-6 md:grid-cols-3">
-              {TESTIMONIALS.map((item) => (
+              {TESTIMONIALS.map((item, index) => (
                 <blockquote
-                  key={item.quote}
+                  key={`${item.quote}-${index}`}
                   className={`reveal-card flex flex-col bg-white p-8 shadow-sm ${item.placeholder ? "border border-dashed border-brand-sage/50" : "border border-brand-border"}`}
                 >
                   <p className="flex-1 leading-relaxed text-brand-muted">&ldquo;{item.quote}&rdquo;</p>
@@ -599,17 +708,16 @@ export default function Home() {
               </div>
 
               <form
-                action={`mailto:${SITE.email}`}
-                method="post"
-                encType="text/plain"
+                onSubmit={handleContactSubmit}
                 className="reveal-up bg-white p-8 shadow-2xl md:p-10"
               >
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label htmlFor="civilite" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                       Civilité
                     </label>
-                    <select id="civilite" name="Civilité" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage">
+                    <select id="civilite" name="civilite" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage">
                       <option value="Mme">Mme</option>
                       <option value="M.">M.</option>
                     </select>
@@ -618,7 +726,7 @@ export default function Home() {
                     <label htmlFor="nom" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                       Nom complet *
                     </label>
-                    <input required id="nom" name="Nom" type="text" autoComplete="name" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
+                    <input required id="nom" name="nom" type="text" autoComplete="name" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
                   </div>
                 </div>
                 <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -626,20 +734,20 @@ export default function Home() {
                     <label htmlFor="email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                       E-mail *
                     </label>
-                    <input required id="email" name="Email" type="email" autoComplete="email" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
+                    <input required id="email" name="email" type="email" autoComplete="email" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
                   </div>
                   <div>
                     <label htmlFor="telephone" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                       Téléphone
                     </label>
-                    <input id="telephone" name="Téléphone" type="tel" autoComplete="tel" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
+                    <input id="telephone" name="telephone" type="tel" autoComplete="tel" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
                   </div>
                 </div>
                 <div className="mt-5">
                   <label htmlFor="objet" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                     Type de demande *
                   </label>
-                  <select required id="objet" name="Demande" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage">
+                  <select required id="objet" name="demande" className="w-full border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage">
                     <option value="Rendez-vous">Demande de rendez-vous</option>
                     <option value="Expertise vente">Expertise — vente</option>
                     <option value="Séparation">Séparation / divorce</option>
@@ -652,17 +760,28 @@ export default function Home() {
                   <label htmlFor="message" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-muted">
                     Message *
                   </label>
-                  <textarea required id="message" name="Message" rows={4} className="w-full resize-y border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
+                  <textarea required id="message" name="message" rows={4} className="w-full resize-y border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-sage" />
                 </div>
                 <label className="mt-5 flex items-start gap-3 text-xs leading-relaxed text-brand-muted">
-                  <input required type="checkbox" name="RGPD" value="accepté" className="mt-0.5 size-4" />
+                  <input required type="checkbox" name="rgpd" value="accepté" className="mt-0.5 size-4" />
                   J&apos;accepte que les informations saisies soient utilisées pour me recontacter, conformément au RGPD.
                 </label>
+                {contactMessage ? (
+                  <p
+                    className={`mt-5 text-sm font-medium ${
+                      contactStatus === "success" ? "text-brand-primary-dark" : "text-red-700"
+                    }`}
+                    role="status"
+                  >
+                    {contactMessage}
+                  </p>
+                ) : null}
                 <button
                   type="submit"
-                  className="mt-6 w-full bg-brand-primary py-3.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
+                  disabled={contactStatus === "submitting"}
+                  className="mt-6 w-full bg-brand-primary py-3.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Envoyer ma demande
+                  {contactStatus === "submitting" ? "Envoi en cours..." : "Envoyer ma demande"}
                 </button>
               </form>
             </div>

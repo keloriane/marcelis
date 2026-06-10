@@ -4,16 +4,16 @@
   --background: #f6f7f6;
   --foreground: #333333;
   /* Vert logo Marcelis */
-  --brand-sage: #97a9a4;
-  --brand-sage-rgb: 151, 169, 164;
-  --brand-sage-light: #c8d4d1;
-  --brand-sage-pale: #e8eeec;
+  --brand-sage: #8eada2;
+  --brand-sage-rgb: 142, 173, 162;
+  --brand-sage-light: #cfe0da;
+  --brand-sage-pale: #eaf2ef;
   /* Dérivés plus foncés pour textes, boutons et sections sombres */
-  --brand-primary: #6f827d;
-  --brand-primary-dark: #556862;
-  --brand-dark: #2f3b38;
-  --brand-dark-mid: #3d4a47;
-  --brand-accent: #7d918c;
+  --brand-primary: #607b72;
+  --brand-primary-dark: #435c53;
+  --brand-dark: #25332f;
+  --brand-dark-mid: #354741;
+  --brand-accent: #8eada2;
   --brand-muted: #737373;
   --brand-surface: #f0f3f2;
   --brand-border: #d9e2df;
@@ -54,15 +54,15 @@ body {
 .section-dark {
   background-color: var(--brand-dark);
   background-image:
-    linear-gradient(165deg, rgba(47, 59, 56, 0.96) 0%, rgba(61, 74, 71, 0.9) 100%),
-    radial-gradient(ellipse at 20% 80%, rgba(var(--brand-sage-rgb), 0.18) 0%, transparent 50%);
+    linear-gradient(165deg, rgba(37, 51, 47, 0.96) 0%, rgba(53, 71, 65, 0.9) 100%),
+    radial-gradient(ellipse at 20% 80%, rgba(var(--brand-sage-rgb), 0.3) 0%, transparent 50%);
 }
 
 .hero-dark {
   background-color: var(--brand-dark);
   background-image:
-    linear-gradient(120deg, rgba(47, 59, 56, 0.93) 35%, rgba(47, 59, 56, 0.58) 100%),
-    radial-gradient(circle at 85% 20%, rgba(var(--brand-sage-rgb), 0.22) 0%, transparent 45%);
+    linear-gradient(108deg, rgba(31, 43, 39, 0.88) 0%, rgba(37, 51, 47, 0.6) 48%, rgba(142, 173, 162, 0.42) 100%),
+    radial-gradient(circle at 84% 18%, rgba(var(--brand-sage-rgb), 0.32) 0%, transparent 44%);
 }
 
 .display-title {

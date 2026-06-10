@@ -18,6 +18,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Contact form email
+
+The contact form sends email server-side through Resend.
+
+Create `.env.local` with:
+
+```bash
+RESEND_API_KEY=...
+CONTACT_FROM_EMAIL="Expertises de maison <contact@your-verified-domain.be>"
+CONTACT_TO_EMAIL="stephanie.marcelis@hotmail.com"
+```
+
+`CONTACT_FROM_EMAIL` must use a domain verified in Resend. The visitor email is set as `reply_to`.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
