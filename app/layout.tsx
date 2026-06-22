@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Great_Vibes, Open_Sans } from "next/font/google";
 import "./globals.css";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-script",
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
@@ -48,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${openSans.variable} h-full antialiased`}>
+    <html lang="fr" className={`${openSans.variable} ${greatVibes.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
