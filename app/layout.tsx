@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Great_Vibes, Open_Sans } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   display: "swap",
-});
-
-const greatVibes = Great_Vibes({
-  variable: "--font-script",
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
+  weight: ["400", "600", "700"],
 });
 
 const siteUrl = "https://www.expertisesdemaison.be";
@@ -55,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${openSans.variable} ${greatVibes.variable} h-full antialiased`}>
+    <html lang="fr" className={`${montserrat.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

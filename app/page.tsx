@@ -25,16 +25,16 @@ const SITE = {
   phone: "0476 30 53 95",
   phoneHref: "tel:+32476305395",
   domain: "expertisesdemaison.be",
-  logo: "/logo.jpg",
+  logo: "/logo-transparent.png",
   heroBackground: "/hero-house.avif",
   profilePhoto: "/Photo N&B.jpg",
   linkedin: "",
   instagram: "",
   facebook: "",
   heroCardIntro: [
-    "MARCELIS Stéphanie intervient principalement dans le Hainaut, le Brabant wallon et à Bruxelles pour la réalisation d'états des lieux et la valorisation de biens immobiliers.",
-    "Votre experte, indépendante et diplômée, se tient ainsi à votre disposition pour la réalisation d'états des lieux locatifs d'entrée et sortie de vos appartements, maisons unifamiliales, studios, bureaux…",
-    "Nous procédons également à l'estimation de la valeur de votre bien.",
+    "J'interviens principalement dans le Hainaut pour l'estimation et la valorisation de biens immobiliers.",
+    "Experte indépendante et diplômée, je vous accompagne à chaque étape de votre projet, qu'il s'agisse de préparer une vente, de clarifier une situation patrimoniale ou de répondre à une démarche administrative.",
+    "Mon objectif reste le même : vous offrir une estimation juste, neutre et précise, sur laquelle vous pouvez vous appuyer en toute confiance.",
   ],
 } as const;
 
@@ -524,47 +524,39 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="hero-dark relative min-h-screen overflow-hidden">
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 overflow-hidden">
             <Image
               src={SITE.heroBackground}
               alt=""
               fill
               priority
-              className="object-cover object-center"
+              className="hero-bg-image object-cover object-center"
               sizes="100vw"
               aria-hidden
             />
           </div>
-          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-0 bg-black/30" />
 
           <div className="relative mx-auto min-h-screen max-w-7xl px-5 pb-8 pt-28 lg:px-8 lg:pb-0 lg:pt-32">
             <div className="max-w-xl lg:max-w-2xl">
               <p className="hero-line display-title text-4xl text-white sm:text-5xl md:text-6xl lg:text-[4.5rem]">
                 MARCELIS
               </p>
-              <p className="hero-line hero-script mt-1 text-5xl text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+              <p className="hero-line mt-1 text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-[4rem]">
                 Stéphanie
               </p>
-              <h1 className="hero-line mt-3 text-xl font-light tracking-wide text-white sm:text-2xl md:text-3xl">
+              <h1 className="hero-line mt-3 text-xl font-bold tracking-wide text-white sm:text-2xl md:text-3xl">
                 Expert Immobilier
               </h1>
               <p className="hero-fade mt-5 max-w-lg text-sm font-semibold leading-relaxed text-white/95 sm:text-base md:text-lg">
-                Une expertise immobilière{" "}
-                <span className="hero-tagline-highlight">indépendante</span>,{" "}
-                <span className="hero-tagline-highlight">claire</span> et{" "}
-                <span className="hero-tagline-highlight">humaine</span>, au
-                service de vos{" "}
-                <span className="hero-tagline-highlight">
-                  projets patrimoniaux
-                </span>
-                .
+                {SITE.tagline}
               </p>
             </div>
           </div>
 
-          <div className="hero-photo hero-card relative mx-auto mt-6 w-full max-w-7xl bg-white px-5 pb-8 lg:absolute lg:bottom-0 lg:right-0 lg:mx-0 lg:mt-0 lg:w-[min(920px,58vw)] lg:max-w-none lg:px-0 lg:pb-0">
-            <div className="hero-photo-content grid gap-0 md:grid-cols-[minmax(0,1fr)_220px] lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_300px]">
-              <div className="flex flex-col justify-between px-0 py-7 md:px-2 md:py-8 lg:px-8 lg:py-9 xl:px-10">
+          <div className="hero-photo hero-card relative mx-auto mt-6 w-full bg-white px-5 pb-8 lg:absolute lg:bottom-0 lg:right-0 lg:mx-0 lg:mt-0 lg:w-[min(980px,62vw)] lg:max-w-none lg:px-0 lg:pb-0">
+            <div className="hero-photo-content grid gap-0 md:grid-cols-[minmax(0,1fr)_240px] lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_320px]">
+              <div className="flex flex-col justify-between px-0 py-7 md:px-2 md:py-8 lg:px-10 lg:py-10 xl:px-12">
                 <div>
                   <div className="flex items-start gap-3">
                     <HexBadge className="size-11 bg-brand-sage/25 text-brand-primary">
@@ -582,44 +574,45 @@ export default function Home() {
                         />
                       </svg>
                     </HexBadge>
-                    <p className="section-label pt-2 text-[10px] font-bold uppercase leading-snug text-brand-muted">
+                    <p className="section-label pt-2 text-[10px] font-bold uppercase leading-snug text-brand-primary-dark">
                       Expert indépendant diplômé
                     </p>
                   </div>
 
-                  <div className="mt-5 space-y-3 text-sm font-semibold leading-relaxed text-brand-dark md:text-[15px]">
+                  <div className="mt-5 space-y-4 text-sm font-bold leading-relaxed text-brand-dark md:text-[15px]">
                     {SITE.heroCardIntro.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
-                    <p className="text-brand-muted">{SITE.ipi}</p>
                   </div>
                 </div>
 
                 <div className="hero-fade mt-7 flex flex-wrap gap-3">
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center bg-brand-dark px-6 py-3 text-[10px] font-semibold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
+                    className="inline-flex items-center justify-center bg-brand-dark px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
                   >
                     Prendre rendez-vous
                   </a>
                   <a
                     href={SITE.phoneHref}
-                    className="inline-flex items-center justify-center border border-brand-dark bg-white px-6 py-3 text-[10px] font-semibold uppercase tracking-wider text-brand-dark transition hover:bg-brand-surface"
+                    className="inline-flex items-center justify-center border border-brand-dark bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-brand-dark transition hover:bg-brand-surface"
                   >
                     {SITE.phone}
                   </a>
                 </div>
               </div>
 
-              <div className="hero-card-photo relative min-h-72 overflow-hidden bg-white md:min-h-[320px] lg:min-h-[380px]">
-                <Image
-                  src={SITE.profilePhoto}
-                  alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
-                  fill
-                  priority
-                  className="object-cover object-top"
-                  sizes="(min-width: 1280px) 300px, (min-width: 768px) 220px, 100vw"
-                />
+              <div className="hero-card-photo relative flex min-h-80 items-end justify-center overflow-visible bg-white md:min-h-[360px] lg:min-h-[420px]">
+                <div className="relative h-[115%] w-full">
+                  <Image
+                    src={SITE.profilePhoto}
+                    alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
+                    fill
+                    priority
+                    className="hero-profile-image object-contain object-bottom"
+                    sizes="(min-width: 1280px) 320px, (min-width: 768px) 240px, 100vw"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -628,7 +621,7 @@ export default function Home() {
         {/* À propos — encart blanc superposé */}
         <section id="a-propos" className="relative z-20 scroll-mt-28">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
-            <div className="grid gap-0 bg-white shadow-2xl lg:grid-cols-[1fr_340px]">
+            <div className="grid gap-0 overflow-hidden rounded-2xl bg-white shadow-2xl lg:grid-cols-[1fr_340px]">
               <div className="p-8 md:p-12 lg:p-14">
                 <SectionLabel
                   icon={
@@ -664,7 +657,7 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              <aside className="flex flex-col justify-center bg-brand-sage-pale p-8 md:p-10">
+              <aside className="flex flex-col justify-center bg-brand-sage-pale/80 p-8 backdrop-blur-sm md:p-10">
                 <h3 className="reveal-up text-sm font-semibold uppercase tracking-widest text-brand-primary">
                   Coordonnées
                 </h3>
@@ -697,23 +690,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Bandeau visuel */}
-        <div className="relative mt-16 h-52 overflow-hidden md:mt-20 md:h-72">
-          <Image
-            src={SITE.profilePhoto}
-            alt=""
-            fill
-            className="object-cover object-[center_25%] brightness-110 saturate-50"
-            sizes="100vw"
-            aria-hidden
-          />
-          <div className="absolute inset-0 bg-white/30" />
-        </div>
-
-        {/* Services — encart sur bandeau */}
+        {/* Services */}
         <section
           id="services"
-          className="relative z-20 -mt-20 scroll-mt-28 md:-mt-28"
+          className="relative z-20 scroll-mt-28 py-16 md:py-20"
         >
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="border-t-8 border-brand-sage bg-white px-8 py-14 shadow-2xl md:px-14 md:py-16">
@@ -897,7 +877,10 @@ export default function Home() {
                   situation, remplissez le formulaire. Je vous recontacte dans
                   les plus brefs délais.
                 </p>
-                <div className="reveal-up mt-8 space-y-3 text-sm">
+                <div className="reveal-up mt-8 space-y-4 rounded-2xl border border-brand-sage/30 bg-brand-sage/10 p-8 text-sm backdrop-blur-sm">
+                  <p className="text-xs font-bold uppercase tracking-widest text-brand-sage-light">
+                    Coordonnées directes
+                  </p>
                   <a
                     href={SITE.phoneHref}
                     className="block font-medium text-white hover:text-brand-sage-light"
@@ -915,7 +898,7 @@ export default function Home() {
 
               <form
                 onSubmit={handleContactSubmit}
-                className="reveal-up bg-white p-8 shadow-2xl md:p-10"
+                className="reveal-up rounded-2xl border border-white/15 bg-white/95 p-8 shadow-2xl backdrop-blur-md md:p-10"
               >
                 <input
                   type="text"
