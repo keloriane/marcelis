@@ -26,7 +26,7 @@ const SITE = {
   phoneHref: "tel:+32476305395",
   domain: "expertisesdemaison.be",
   logo: "/logo-transparent.png",
-  heroBackground: "/hero-house.avif",
+  heroBackground: "/hero-villa.png",
   profilePhoto: "/photo-stephanie.png",
   linkedin: "",
   instagram: "",
@@ -277,10 +277,20 @@ export default function Home() {
   const [contactMessage, setContactMessage] = useState("");
 
   useEffect(() => {
-    const onScroll = () => setHeaderSolid(window.scrollY > 48);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      const onScroll = () => setHeaderSolid(window.scrollY > 48);
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeaderSolid(!entry.isIntersecting),
+      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -386,8 +396,12 @@ export default function Home() {
   }, []);
 
   const navLinkClass = headerSolid
+    ? "text-brand-dark hover:text-brand-primary"
+    : "text-white/90 hover:text-white";
+
+  const headerIconClass = headerSolid
     ? "text-brand-muted hover:text-brand-primary"
-    : "text-brand-dark/75 hover:text-brand-dark";
+    : "text-white/90 hover:text-white";
 
   async function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -457,7 +471,7 @@ export default function Home() {
               width={437}
               height={277}
               priority
-              className="h-12 w-auto transition lg:h-14"
+              className={`h-12 w-auto transition lg:h-14 ${headerSolid ? "" : "brightness-0 invert"}`}
             />
           </a>
           <nav
@@ -480,7 +494,7 @@ export default function Home() {
               target={SITE.facebook ? "_blank" : undefined}
               rel={SITE.facebook ? "noopener noreferrer" : undefined}
               aria-label="Facebook"
-              className={`transition-colors ${headerSolid ? "text-brand-muted hover:text-brand-primary" : "text-brand-dark/80 hover:text-brand-dark"}`}
+              className={`transition-colors ${headerIconClass}`}
             >
               <svg
                 className="size-4"
@@ -496,7 +510,7 @@ export default function Home() {
               target={SITE.linkedin ? "_blank" : undefined}
               rel={SITE.linkedin ? "noopener noreferrer" : undefined}
               aria-label="LinkedIn"
-              className={`transition-colors ${headerSolid ? "text-brand-muted hover:text-brand-primary" : "text-brand-dark/80 hover:text-brand-dark"}`}
+              className={`transition-colors ${headerIconClass}`}
             >
               <svg
                 className="size-4"
@@ -523,98 +537,103 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="hero-dark relative min-h-screen overflow-hidden">
+        <section id="hero" className="hero-dark relative min-h-screen overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <Image
               src={SITE.heroBackground}
               alt=""
               fill
               priority
-              className="hero-bg-image object-cover object-center"
+              quality={100}
+              className="object-cover object-center"
               sizes="100vw"
               aria-hidden
             />
           </div>
           <div className="absolute inset-0 bg-black/30" />
 
-          <div className="relative mx-auto min-h-screen max-w-7xl px-5 pb-8 pt-28 lg:px-8 lg:pb-0 lg:pt-32">
-            <div className="max-w-xl lg:max-w-2xl">
-              <p className="hero-line display-title text-4xl text-white sm:text-5xl md:text-6xl lg:text-[4.5rem]">
-                MARCELIS
-              </p>
-              <p className="hero-line mt-1 text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-[4rem]">
-                Stéphanie
-              </p>
-              <h1 className="hero-line mt-3 text-xl font-bold tracking-wide text-white sm:text-2xl md:text-3xl">
-                Expert Immobilier
-              </h1>
-              <p className="hero-fade mt-5 max-w-lg text-sm font-semibold leading-relaxed text-white/95 sm:text-base md:text-lg">
-                {SITE.tagline}
-              </p>
+          <div className="relative flex min-h-screen flex-col justify-between gap-10 pb-6 pt-28 lg:gap-16 lg:pb-8 lg:pt-32">
+            <div className="relative z-10 mx-auto w-full max-w-7xl px-5 lg:px-8">
+              <div className="max-w-sm sm:max-w-md lg:max-w-lg">
+                <p className="hero-line display-title text-4xl text-white sm:text-5xl md:text-6xl lg:text-[4.5rem]">
+                  MARCELIS
+                </p>
+                <p className="hero-line mt-1 text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-[4rem]">
+                  Stéphanie
+                </p>
+                <h1 className="hero-line mt-3 text-xl font-bold tracking-wide text-white sm:text-2xl md:text-3xl">
+                  Expert Immobilier
+                </h1>
+                <p className="hero-fade mt-5 max-w-md text-sm font-semibold leading-relaxed text-white/95 sm:text-base md:text-lg">
+                  {SITE.tagline}
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex w-full justify-end px-5 lg:px-0">
+              <div className="hero-photo hero-card w-full bg-white lg:w-[min(880px,58vw)]">
+                <div className="hero-photo-content grid gap-0 md:grid-cols-[minmax(0,1fr)_220px] lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_300px]">
+                <div className="flex flex-col justify-between px-5 py-7 md:px-8 md:py-8 lg:px-10 lg:py-10 xl:px-12">
+                  <div>
+                    <div className="flex items-start gap-3">
+                      <HexBadge className="size-11 bg-brand-sage/25 text-brand-primary">
+                        <svg
+                          className="size-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                          />
+                        </svg>
+                      </HexBadge>
+                      <p className="section-label pt-2 text-[10px] font-bold uppercase leading-snug text-brand-primary-dark">
+                        Expert indépendant diplômé
+                      </p>
+                    </div>
+
+                    <div className="mt-5 space-y-4 text-sm font-bold leading-relaxed text-brand-dark md:text-[15px]">
+                      {SITE.heroCardIntro.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="hero-fade mt-7 flex flex-wrap gap-3">
+                    <a
+                      href="#contact"
+                      className="inline-flex items-center justify-center bg-brand-dark px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
+                    >
+                      Prendre rendez-vous
+                    </a>
+                    <a
+                      href={SITE.phoneHref}
+                      className="inline-flex items-center justify-center border border-brand-dark bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-brand-dark transition hover:bg-brand-surface"
+                    >
+                      {SITE.phone}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="hero-card-photo relative flex min-h-72 items-end justify-center overflow-hidden bg-white md:min-h-[340px] lg:min-h-[380px]">
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={SITE.profilePhoto}
+                      alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
+                      fill
+                      priority
+                      className="object-contain object-bottom grayscale"
+                      sizes="(min-width: 1280px) 300px, (min-width: 768px) 220px, 100vw"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="hero-photo hero-card relative mx-auto mt-6 w-full bg-white px-5 pb-8 lg:absolute lg:bottom-0 lg:right-0 lg:mx-0 lg:mt-0 lg:w-[min(980px,62vw)] lg:max-w-none lg:px-0 lg:pb-0">
-            <div className="hero-photo-content grid gap-0 md:grid-cols-[minmax(0,1fr)_240px] lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_320px]">
-              <div className="flex flex-col justify-between px-0 py-7 md:px-2 md:py-8 lg:px-10 lg:py-10 xl:px-12">
-                <div>
-                  <div className="flex items-start gap-3">
-                    <HexBadge className="size-11 bg-brand-sage/25 text-brand-primary">
-                      <svg
-                        className="size-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                        />
-                      </svg>
-                    </HexBadge>
-                    <p className="section-label pt-2 text-[10px] font-bold uppercase leading-snug text-brand-primary-dark">
-                      Expert indépendant diplômé
-                    </p>
-                  </div>
-
-                  <div className="mt-5 space-y-4 text-sm font-bold leading-relaxed text-brand-dark md:text-[15px]">
-                    {SITE.heroCardIntro.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="hero-fade mt-7 flex flex-wrap gap-3">
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center justify-center bg-brand-dark px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-brand-primary-dark"
-                  >
-                    Prendre rendez-vous
-                  </a>
-                  <a
-                    href={SITE.phoneHref}
-                    className="inline-flex items-center justify-center border border-brand-dark bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-brand-dark transition hover:bg-brand-surface"
-                  >
-                    {SITE.phone}
-                  </a>
-                </div>
-              </div>
-
-              <div className="hero-card-photo relative flex min-h-80 items-end justify-center overflow-visible bg-white md:min-h-[360px] lg:min-h-[420px]">
-                <div className="relative h-[115%] w-full">
-                  <Image
-                    src={SITE.profilePhoto}
-                    alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
-                    fill
-                    priority
-                    className="object-contain object-bottom"
-                    sizes="(min-width: 1280px) 320px, (min-width: 768px) 240px, 100vw"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
