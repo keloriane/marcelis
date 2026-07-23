@@ -27,7 +27,7 @@ const SITE = {
   domain: "expertisesdemaison.be",
   logo: "/logo-transparent.png",
   heroBackground: "/hero-house.avif",
-  profilePhoto: "/Photo N&B.jpg",
+  profilePhoto: "/photo-stephanie.png",
   linkedin: "",
   instagram: "",
   facebook: "",
@@ -609,7 +609,7 @@ export default function Home() {
                     alt={`${SITE.name}, ${SITE.title} agréé ${SITE.ipi}`}
                     fill
                     priority
-                    className="hero-profile-image object-contain object-bottom"
+                    className="object-contain object-bottom"
                     sizes="(min-width: 1280px) 320px, (min-width: 768px) 240px, 100vw"
                   />
                 </div>
